@@ -1,0 +1,507 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Splitenry v2 — Tiler Page Styles
+   Full-page dark theme for the multi-panel tiling view
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg-primary:     #0c0c14;
+  --bg-secondary:   #12121e;
+  --bg-toolbar:     rgba(14, 14, 22, 0.95);
+  --bg-panel-bar:   #161626;
+  --bg-input:       #1a1a2e;
+  --bg-hover:       #222240;
+  --bg-dropdown:    #161626;
+
+  --border:         rgba(255, 255, 255, 0.06);
+  --border-hover:   rgba(255, 255, 255, 0.12);
+  --border-focus:   rgba(99, 102, 241, 0.5);
+
+  --divider:        rgba(255, 255, 255, 0.08);
+  --divider-hover:  rgba(99, 102, 241, 0.6);
+  --divider-active: rgba(99, 102, 241, 0.9);
+
+  --text-primary:   #e8e8f0;
+  --text-secondary: #8888a8;
+  --text-muted:     #555570;
+  --text-placeholder:#444460;
+
+  --accent-indigo:  #6366f1;
+  --accent-purple:  #a855f7;
+  --accent-cyan:    #06b6d4;
+  --accent-red:     #ef4444;
+  --accent-green:   #22c55e;
+
+  --gradient-primary: linear-gradient(135deg, #6366f1, #a855f7);
+
+  --toolbar-height: 42px;
+  --panel-bar-height: 32px;
+  --divider-size: 6px;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+
+  --transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Toolbar ───────────────────────────────────────────────────── */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--toolbar-height);
+  padding: 0 12px;
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.toolbar-left, .toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 12px;
+  border-right: 1px solid var(--border);
+  margin-right: 4px;
+}
+
+.toolbar-title {
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.3px;
+}
+
+/* ── Toolbar Buttons ───────────────────────────────────────────── */
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.toolbar-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.toolbar-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Layout Selector ───────────────────────────────────────────── */
+
+.layout-selector {
+  position: relative;
+}
+
+.layout-selector-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.layout-selector-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.layout-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 280px;
+  background: var(--bg-dropdown);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  padding: 6px;
+  display: none;
+  z-index: 200;
+}
+
+.layout-dropdown.open {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.layout-dropdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 9px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.layout-dropdown-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.layout-dropdown-item.active {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: var(--text-primary);
+}
+
+.layout-dropdown-item svg {
+  width: 44px;
+  height: 30px;
+}
+
+.layout-dropdown-item rect.panel-rect {
+  fill: rgba(99, 102, 241, 0.3);
+  stroke: rgba(99, 102, 241, 0.5);
+  stroke-width: 0.8;
+  rx: 1;
+  ry: 1;
+}
+
+.layout-dropdown-item:hover rect.panel-rect {
+  fill: rgba(99, 102, 241, 0.5);
+  stroke: rgba(99, 102, 241, 0.7);
+}
+
+/* ── Tiler Container ───────────────────────────────────────────── */
+
+.tiler-container {
+  height: calc(100vh - var(--toolbar-height));
+  display: flex;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+/* ── Split Containers (horizontal & vertical) ──────────────────── */
+
+.split-h {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+
+.split-v {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Panels ────────────────────────────────────────────────────── */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  min-height: 80px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.panel-bar {
+  display: flex;
+  align-items: center;
+  height: var(--panel-bar-height);
+  padding: 0 6px;
+  background: var(--bg-panel-bar);
+  border-bottom: 1px solid var(--border);
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.panel-url-input {
+  flex: 1;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: 'Inter', system-ui, sans-serif;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.panel-url-input:focus {
+  border-color: var(--border-focus);
+}
+
+.panel-url-input::placeholder {
+  color: var(--text-placeholder);
+}
+
+.panel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.panel-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.panel-btn.close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--accent-red);
+}
+
+.panel-iframe-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.panel-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #fff;
+}
+
+.panel-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.panel-placeholder svg {
+  opacity: 0.3;
+}
+
+.panel-placeholder-text {
+  text-align: center;
+  line-height: 1.5;
+}
+
+.panel-placeholder-hint {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* Panel drag overlay — prevents iframe from stealing mouse events during resize */
+.panel-drag-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: none;
+  cursor: inherit;
+}
+
+.panel-drag-overlay.active {
+  display: block;
+}
+
+/* ── Dividers ──────────────────────────────────────────────────── */
+
+.divider {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+  transition: background var(--transition);
+}
+
+.divider-h {
+  width: var(--divider-size);
+  cursor: col-resize;
+  background: var(--divider);
+}
+
+.divider-v {
+  height: var(--divider-size);
+  cursor: row-resize;
+  background: var(--divider);
+}
+
+.divider::after {
+  content: '';
+  position: absolute;
+  border-radius: 2px;
+  background: transparent;
+  transition: background var(--transition);
+}
+
+.divider-h::after {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 24px;
+}
+
+.divider-v::after {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 2px;
+}
+
+.divider:hover {
+  background: var(--divider-hover);
+}
+
+.divider:hover::after {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.divider.dragging {
+  background: var(--divider-active);
+}
+
+.divider.dragging::after {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Loading Spinner ───────────────────────────────────────────── */
+
+.panel-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 5;
+}
+
+.panel-loading.active {
+  display: block;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent-indigo);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Toast ─────────────────────────────────────────────────────── */
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  background: rgba(34, 197, 94, 0.9);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* ── No-select during drag ─────────────────────────────────────── */
+
+body.dragging {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.dragging iframe {
+  pointer-events: none;
+}

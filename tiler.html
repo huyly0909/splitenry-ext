@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Splitenry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tiler.css">
+</head>
+<body>
+  <!-- ── Top Toolbar ──────────────────────────────────────────── -->
+  <header class="toolbar" id="toolbar">
+    <div class="toolbar-left">
+      <div class="toolbar-brand">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="9" height="20" rx="2" fill="url(#tGrad1)" opacity="0.9"/>
+          <rect x="13" y="2" width="9" height="9" rx="2" fill="url(#tGrad2)" opacity="0.7"/>
+          <rect x="13" y="13" width="9" height="9" rx="2" fill="url(#tGrad3)" opacity="0.5"/>
+          <defs>
+            <linearGradient id="tGrad1" x1="2" y1="2" x2="11" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6366f1"/><stop offset="1" stop-color="#a855f7"/>
+            </linearGradient>
+            <linearGradient id="tGrad2" x1="13" y1="2" x2="22" y2="11" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#06b6d4"/><stop offset="1" stop-color="#22d3ee"/>
+            </linearGradient>
+            <linearGradient id="tGrad3" x1="13" y1="13" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#f472b6"/><stop offset="1" stop-color="#fb923c"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="toolbar-title">Splitenry</span>
+      </div>
+
+      <!-- Layout Preset Selector -->
+      <div class="layout-selector" id="layoutSelector">
+        <button class="layout-selector-btn" id="layoutSelectorBtn" title="Choose layout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+          <span id="currentLayoutName">Select Layout</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+
+        <!-- Layout Dropdown -->
+        <div class="layout-dropdown" id="layoutDropdown">
+          <!-- Rendered by tiler.js -->
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar-right">
+      <button class="toolbar-btn" id="btnAddPanel" title="Add panel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>Add Panel</span>
+      </button>
+      <button class="toolbar-btn" id="btnResetLayout" title="Reset layout">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Tiler Container ──────────────────────────────────────── -->
+  <main class="tiler-container" id="tilerContainer">
+    <!-- Panels and dividers are rendered dynamically by tiler.js -->
+  </main>
+
+  <!-- ── Toast ────────────────────────────────────────────────── -->
+  <div class="toast" id="toast">
+    <span id="toastMsg">Layout applied!</span>
+  </div>
+
+  <script src="layouts.js"></script>
+  <script src="tiler.js"></script>
+</body>
+</html>
