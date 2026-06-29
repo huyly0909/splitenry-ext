@@ -82,4 +82,28 @@
     // Some browsers don't allow overriding window.top
     // That's okay — the MutationObserver fallback handles most cases
   }
+
+  // 5. Interaction tracking for Splitenry parent
+  // Notify parent to activate panel on click/focus
+  const notifyParentActive = () => {
+    try {
+      window.parent.postMessage({ type: 'SPLITENRY_ACTIVATE_PANEL' }, '*');
+    } catch (e) {}
+  };
+  
+  window.addEventListener('mousedown', notifyParentActive, true);
+  window.addEventListener('focus', notifyParentActive, true);
+  
+  // Also track touch events for mobile/tablets
+  window.addEventListener('touchstart', notifyParentActive, { passive: true, capture: true });
+
+  // 6. Intercept Cmd+R / Ctrl+R to prevent full tab reload
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'r') {
+      e.preventDefault();
+      try {
+        window.parent.postMessage({ type: 'SPLITENRY_RELOAD_PANEL' }, '*');
+      } catch (err) {}
+    }
+  }, true);
 })();

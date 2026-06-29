@@ -15,6 +15,8 @@
   const layoutDropdown   = document.getElementById('layoutDropdown');
   const currentLayoutName = document.getElementById('currentLayoutName');
   const btnAddPanel      = document.getElementById('btnAddPanel');
+  const btnSplitRight    = document.getElementById('btnSplitRight');
+  const btnSplitBottom   = document.getElementById('btnSplitBottom');
   const btnResetLayout   = document.getElementById('btnResetLayout');
   const toast            = document.getElementById('toast');
   const toastMsg         = document.getElementById('toastMsg');
@@ -24,6 +26,7 @@
   let currentLayoutId = null;
   let panelCounter = 0;
   let panels = []; // { id, url, element }
+  let activePanelEl = null; // currently focused panel element
 
   // ── Layout Dropdown ─────────────────────────────────────────────
 
@@ -172,10 +175,32 @@
       removePanel(panel);
     });
 
+    // Activate on click
+    panel.addEventListener('mousedown', () => {
+      setActivePanel(panel);
+    });
+
     // Track panel
     panels.push({ id, url, element: panel });
 
+    // Auto-activate newly created panel
+    setActivePanel(panel);
+
     return panel;
+  }
+
+  // ── Active Panel ─────────────────────────────────────────────────
+
+  function setActivePanel(panelEl) {
+    if (activePanelEl === panelEl) return;
+    // Remove previous active
+    if (activePanelEl) {
+      activePanelEl.classList.remove('panel-active');
+    }
+    activePanelEl = panelEl;
+    if (activePanelEl) {
+      activePanelEl.classList.add('panel-active');
+    }
   }
 
   function createIframe(url) {
@@ -278,6 +303,13 @@
     // Remove from state
     const id = panelEl.dataset.panelId;
     panels = panels.filter(p => p.id !== id);
+
+    // Transfer active panel if needed
+    if (activePanelEl === panelEl) {
+      activePanelEl = null;
+      const nextPanel = tilerContainer.querySelector('.panel');
+      if (nextPanel) setActivePanel(nextPanel);
+    }
 
     saveState();
   }
@@ -564,37 +596,68 @@
     return container;
   }
 
-  // ── Add Panel ───────────────────────────────────────────────────
+  // ── Split Panel ─────────────────────────────────────────────────
 
-  function addPanel() {
-    // Find the last panel and split it horizontally
-    const allPanelEls = tilerContainer.querySelectorAll('.panel');
-    if (allPanelEls.length === 0) {
-      // Empty container — just add a panel
+  /**
+   * Split the active panel in the given direction.
+   * @param {'h'|'v'} direction — 'h' = split right, 'v' = split below
+   */
+  function splitPanel(direction) {
+    // Fallback: if no active panel, pick the last one
+    const targetPanel = activePanelEl || tilerContainer.querySelector('.panel:last-of-type');
+    if (!targetPanel) {
+      // No panels at all — create initial panel
       const panel = createPanelElement('');
       panel.style.flex = '1';
       const wrap = document.createElement('div');
-      wrap.className = 'split-h';
+      wrap.className = direction === 'h' ? 'split-h' : 'split-v';
       wrap.appendChild(panel);
       tilerContainer.appendChild(wrap);
+      saveState();
       return;
     }
 
-    // Get the root split container
-    const root = tilerContainer.firstElementChild;
-    if (!root) return;
+    const parent = targetPanel.parentElement;
+    const splitClass = direction === 'h' ? 'split-h' : 'split-v';
 
-    // Add a divider and new panel to the root
-    const isHorizontal = root.classList.contains('split-h');
-    root.appendChild(createDivider(isHorizontal ? 'h' : 'v'));
-    const newPanel = createPanelElement('');
-    newPanel.style.flex = '1';
-    root.appendChild(newPanel);
+    // If the parent is already a split in the same direction,
+    // insert the new panel adjacent to the target
+    if (parent && parent.classList.contains(splitClass)) {
+      const newPanel = createPanelElement('');
+      const divider = createDivider(direction);
 
-    // Rebalance flex
-    const flexChildren = Array.from(root.children).filter(c => !c.classList.contains('divider'));
-    const equalFlex = 1 / flexChildren.length;
-    flexChildren.forEach(c => { c.style.flex = String(equalFlex); });
+      // Insert divider + new panel right after the target
+      const nextSibling = targetPanel.nextSibling;
+      parent.insertBefore(divider, nextSibling);
+      parent.insertBefore(newPanel, divider.nextSibling);
+
+      // Rebalance flex equally across all children
+      const flexChildren = Array.from(parent.children).filter(
+        c => !c.classList.contains('divider')
+      );
+      const equalFlex = 1 / flexChildren.length;
+      flexChildren.forEach(c => { c.style.flex = String(equalFlex); });
+    } else {
+      // Wrap the target panel in a new split container
+      const wrapper = document.createElement('div');
+      wrapper.className = splitClass;
+
+      // Preserve the target's flex value
+      wrapper.style.flex = targetPanel.style.flex || '1';
+
+      // Replace the target in the DOM with the wrapper
+      targetPanel.parentElement.insertBefore(wrapper, targetPanel);
+      targetPanel.remove();
+
+      // Set equal flex
+      targetPanel.style.flex = '1';
+      const newPanel = createPanelElement('');
+      newPanel.style.flex = '1';
+
+      wrapper.appendChild(targetPanel);
+      wrapper.appendChild(createDivider(direction));
+      wrapper.appendChild(newPanel);
+    }
 
     saveState();
   }
@@ -671,13 +734,64 @@
       toggleDropdown();
     });
 
-    btnAddPanel.addEventListener('click', addPanel);
+    btnSplitRight.addEventListener('click', () => splitPanel('h'));
+    btnSplitBottom.addEventListener('click', () => splitPanel('v'));
 
     btnResetLayout.addEventListener('click', () => {
       if (currentLayoutId) {
         const layout = LAYOUTS.find(l => l.id === currentLayoutId);
         if (layout) applyPresetLayout(layout);
       }
+    });
+
+    // Global Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Check for Cmd/Ctrl + R (with or without Shift)
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'r') {
+        if (activePanelEl) {
+          e.preventDefault(); // Prevent full page reload
+          
+          const iframe = activePanelEl.querySelector('.panel-iframe');
+          if (iframe) {
+            iframe.src = iframe.src; // Reload iframe
+            showToast('Panel refreshed');
+          }
+        }
+      }
+    });
+
+    // Handle messages from content-script.js inside iframes
+    window.addEventListener('message', (e) => {
+      if (!e.data || typeof e.data !== 'object') return;
+      
+      if (e.data.type === 'SPLITENRY_ACTIVATE_PANEL' || e.data.type === 'SPLITENRY_RELOAD_PANEL') {
+        // Find which iframe sent the message
+        const iframes = tilerContainer.querySelectorAll('.panel-iframe');
+        for (const iframe of iframes) {
+          if (iframe.contentWindow === e.source) {
+            const panelEl = iframe.closest('.panel');
+            if (panelEl) {
+              setActivePanel(panelEl);
+              
+              if (e.data.type === 'SPLITENRY_RELOAD_PANEL') {
+                iframe.src = iframe.src;
+                showToast('Panel refreshed');
+              }
+            }
+            break;
+          }
+        }
+      }
+    });
+
+    // Fallback: detect focus moving into an iframe
+    window.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (document.activeElement && document.activeElement.classList.contains('panel-iframe')) {
+          const panelEl = document.activeElement.closest('.panel');
+          if (panelEl) setActivePanel(panelEl);
+        }
+      }, 0);
     });
 
     // Check URL params for initial layout

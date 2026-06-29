@@ -54,12 +54,29 @@
     </div>
 
     <div class="toolbar-right">
-      <button class="toolbar-btn" id="btnAddPanel" title="Add panel">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-        <span>Add Panel</span>
-      </button>
+      <div class="add-panel-wrapper" id="addPanelWrapper">
+        <button class="toolbar-btn add-panel-btn" id="btnAddPanel" title="Add panel">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="add-panel-popover" id="addPanelPopover">
+          <button class="add-panel-option" id="btnSplitRight" title="Split active panel to the right">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="12" y1="3" x2="12" y2="21"/>
+            </svg>
+            <span>Split Right</span>
+          </button>
+          <button class="add-panel-option" id="btnSplitBottom" title="Split active panel below">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+            </svg>
+            <span>Split Below</span>
+          </button>
+        </div>
+      </div>
       <button class="toolbar-btn" id="btnResetLayout" title="Reset layout">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
