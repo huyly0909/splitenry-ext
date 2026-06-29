@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Splitenry",
   "description": "Split your browser into resizable panels — view multiple sites in one window",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "huyly0909",
   "permissions": [
     "declarativeNetRequest",
